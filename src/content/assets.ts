@@ -2,7 +2,9 @@
 
 import type { Gender, HeadId, OutfitId } from './types';
 
-const w = (...parts: string[]) => `/assets/${parts.join('/')}.webp`;
+/** Respect Vite `base` so GitHub Pages project URLs resolve correctly. */
+const w = (...parts: string[]) =>
+  `${import.meta.env.BASE_URL}assets/${parts.join('/')}.webp`;
 
 export const assets = {
   characters: {

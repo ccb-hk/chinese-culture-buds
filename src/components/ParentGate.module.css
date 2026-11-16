@@ -19,7 +19,7 @@
   padding: 36px 28px;
   border-radius: 28px;
   background-color: rgba(255, 248, 239, 0.92);
-  background-image: url('/assets/ui/panel.webp');
+  background-image: var(--asset-ui-panel);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   box-shadow: 0 16px 40px rgba(58, 42, 26, 0.2);

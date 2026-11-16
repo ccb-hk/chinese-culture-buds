@@ -48,7 +48,7 @@
   min-height: 148px;
   border-radius: 22px;
   background-color: rgba(255, 255, 255, 0.92);
-  background-image: url('/assets/ui/card.webp');
+  background-image: var(--asset-ui-card);
   background-size: cover;
   background-position: center;
   border: 3px solid transparent;

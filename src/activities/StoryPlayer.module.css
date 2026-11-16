@@ -111,7 +111,7 @@
   gap: 16px;
   padding: 18px 20px calc(18px + env(safe-area-inset-bottom, 0px));
   background-color: rgba(255, 248, 235, 0.55);
-  background-image: url('/assets/ui/panel.webp');
+  background-image: var(--asset-ui-panel);
   background-size: 100% 140%;
   background-position: center top;
   background-repeat: no-repeat;

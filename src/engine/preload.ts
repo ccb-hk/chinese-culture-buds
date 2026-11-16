@@ -3,7 +3,7 @@ import { assets } from '../content/assets';
 const cached = new Set<string>();
 
 function pushStrings(value: unknown, out: string[]) {
-  if (typeof value === 'string' && value.startsWith('/assets/')) {
+  if (typeof value === 'string' && value.includes('/assets/')) {
     out.push(value);
     return;
   }

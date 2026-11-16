@@ -42,7 +42,7 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: url('/assets/ui/icon_star.webp') center / contain no-repeat;
+  background: var(--asset-ui-star) center / contain no-repeat;
   font-size: 18px;
   font-weight: 800;
   color: #7a3b12;
