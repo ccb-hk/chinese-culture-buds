@@ -13,6 +13,19 @@ dist-ssr
 *.local
 lines-export.csv
 
+# Env
+.env
+.env.*
+!.env.example
+
+# Coverage / caches
+coverage
+*.lcov
+.nyc_output
+*.tsbuildinfo
+.eslintcache
+.vite/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
