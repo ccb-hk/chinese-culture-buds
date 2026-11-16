@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="85" fill="#EF5350" stroke="#B71C1C" stroke-width="10"/>
+  <circle cx="100" cy="100" r="55" fill="#FFCDD2"/>
+  <text x="100" y="112" text-anchor="middle" font-size="42" font-family="Noto Sans TC,sans-serif" fill="#B71C1C" font-weight="700">鼓</text>
+</svg>

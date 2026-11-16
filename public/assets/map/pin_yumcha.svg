@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" width="120" height="140">
+  <circle cx="60" cy="55" r="42" fill="#8D6E63" stroke="#FFF" stroke-width="6"/>
+  <path d="M60 95l18 30H42z" fill="#8D6E63"/>
+  <text x="60" y="62" text-anchor="middle" font-size="22" font-family="Noto Sans TC, sans-serif" fill="#FFF" font-weight="700">飲茶</text>
+</svg>

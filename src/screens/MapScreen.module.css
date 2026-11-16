@@ -1,0 +1,102 @@
+.page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.world {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 900px;
+}
+
+.pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  width: 96px;
+  min-height: 110px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.pin img {
+  width: 96px;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
+  transition: transform 0.15s ease;
+}
+
+.pin:active img {
+  transform: scale(0.94);
+}
+
+.locked img {
+  filter: grayscale(1) brightness(0.85) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
+  opacity: 0.75;
+}
+
+.lockBadge {
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(58, 42, 26, 0.75);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+
+.doneBadge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.player {
+  position: absolute;
+  transform: translate(-50%, -90%);
+  transition: left 0.7s ease, top 0.7s ease;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.fog {
+  position: absolute;
+  inset: -20% -10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55), transparent 70%);
+  pointer-events: none;
+}
+
+.stickersBtn {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 8;
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <circle cx="100" cy="100" r="90" fill="#FFB300" stroke="#FFD54F" stroke-width="10"/>
+  <circle cx="100" cy="100" r="70" fill="none" stroke="#FFF8E1" stroke-width="4" stroke-dasharray="8 6"/>
+  <text x="100" y="95" text-anchor="middle" font-size="28" font-family="Noto Sans TC, sans-serif" fill="#FFF" font-weight="700">金牌</text>
+  <text x="100" y="128" text-anchor="middle" font-size="18" font-family="Noto Sans TC, sans-serif" fill="#FFF8E1">中秋小達人</text>
+</svg>

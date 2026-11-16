@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#1A237E"/>
+  <circle cx="320" cy="80" r="50" fill="#FFF59D"/>
+  <circle cx="100" cy="280" r="40" fill="#FFE0B2"/>
+  <circle cx="180" cy="270" r="36" fill="#FFE0B2"/>
+  <circle cx="250" cy="285" r="34" fill="#FFE0B2"/>
+  <rect x="70" y="310" width="200" height="50" rx="12" fill="#6D4C41"/>
+  <circle cx="140" cy="300" r="18" fill="#FFB74D"/>
+  <circle cx="190" cy="300" r="18" fill="#FFB74D"/>
+  <text x="200" y="380" text-anchor="middle" fill="#FFF" font-size="22" font-family="Noto Sans TC,sans-serif">月光下食月餅</text>
+</svg>

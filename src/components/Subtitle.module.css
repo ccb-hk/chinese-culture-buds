@@ -1,0 +1,27 @@
+.bar {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 35;
+  max-width: min(90vw, 820px);
+  width: max-content;
+  padding: 14px 22px;
+  border-radius: 18px;
+  background: rgba(58, 42, 26, 0.82);
+  color: #fff;
+  font-size: var(--subtitle-size);
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  pointer-events: none;
+}
+
+.whiteboard {
+  font-size: calc(var(--subtitle-size) * 1.25);
+  padding: 16px 26px;
+}
+
+.hidden {
+  display: none;
+}

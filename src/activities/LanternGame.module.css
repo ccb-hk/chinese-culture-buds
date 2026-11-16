@@ -1,0 +1,179 @@
+.page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 88px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  overflow: auto;
+  text-align: center;
+  transition: background 0.6s ease;
+}
+
+.day {
+  background: linear-gradient(160deg, #fff6e8, #ffe0b2);
+}
+
+.night {
+  background: linear-gradient(160deg, #1a237e, #283593 55%, #3949ab);
+}
+
+.title {
+  font-size: clamp(24px, 4vw, 34px);
+  color: var(--color-primary-deep);
+  font-weight: 700;
+}
+
+.night .title {
+  color: #fff8e1;
+}
+
+.shapes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  width: min(96vw, 720px);
+}
+
+.shapeCard {
+  min-width: 140px;
+  min-height: 160px;
+  border-radius: 22px;
+  background: #fff;
+  border: 3px solid transparent;
+  box-shadow: 0 5px 0 rgba(58, 42, 26, 0.12);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.shapeCard img {
+  width: 100px;
+  height: 110px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.shapeCard:active {
+  transform: scale(0.97);
+}
+
+.stage {
+  position: relative;
+  width: min(70vw, 280px);
+  height: min(70vw, 300px);
+  display: grid;
+  place-items: center;
+}
+
+.lantern {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  transform-origin: top center;
+}
+
+.lit .lantern {
+  filter: drop-shadow(0 0 24px #ffecb3) drop-shadow(0 0 48px #ffb300);
+  animation: sway 2.2s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+.moon {
+  position: absolute;
+  top: 8%;
+  right: 10%;
+  font-size: 64px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.night .moon {
+  opacity: 1;
+}
+
+.slots {
+  position: absolute;
+  inset: 18% 16% 22%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 6px;
+  pointer-events: none;
+}
+
+.slot {
+  border-radius: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.45);
+  display: grid;
+  place-items: center;
+}
+
+.slot img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: min(96vw, 560px);
+}
+
+.stickerBtn {
+  width: 88px;
+  height: 88px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 4px 0 rgba(58, 42, 26, 0.1);
+  display: grid;
+  place-items: center;
+  padding: 6px;
+}
+
+.stickerBtn img {
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+}
+
+.stickerBtn:disabled {
+  opacity: 0.35;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.bulb {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  font-size: 48px;
+  background: #fff59d;
+  box-shadow: 0 0 0 6px #ffe082, 0 8px 0 rgba(0, 0, 0, 0.08);
+}

@@ -1,0 +1,136 @@
+.page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0288d1;
+}
+
+.river {
+  position: absolute;
+  inset: 0 0 200px 0;
+  overflow: hidden;
+}
+
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.boatWrap {
+  position: absolute;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  transition: left 0.15s linear;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.boat {
+  width: min(36vw, 240px);
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.2));
+}
+
+.avatar {
+  position: absolute;
+  top: -36px;
+  left: 42%;
+  pointer-events: none;
+}
+
+.splash {
+  position: absolute;
+  bottom: -8px;
+  left: 20%;
+  font-size: 28px;
+  animation: splash 0.4s ease-out;
+}
+
+@keyframes splash {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(0.8);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(1.2);
+  }
+}
+
+.controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(transparent, rgba(1, 87, 155, 0.85));
+  z-index: 5;
+}
+
+.drum {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.drum img {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: filter 0.08s ease, transform 0.08s ease;
+}
+
+.drumBeat img {
+  filter: drop-shadow(0 0 18px #fff59d) drop-shadow(0 0 28px #ffeb3b);
+  transform: scale(1.08);
+}
+
+.progress {
+  position: absolute;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  font-weight: 700;
+  color: #01579b;
+}
+
+.finish {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(1, 87, 155, 0.45);
+  text-align: center;
+}
+
+.finish h2 {
+  font-size: 36px;
+  color: #fff;
+}
