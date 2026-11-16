@@ -1,7 +1,7 @@
+import { assets } from '../content/assets';
 import { themes } from '../content/themes';
 import { Subtitle } from '../components/Subtitle';
 import { TopBar } from '../components/TopBar';
-import { assetPath } from '../engine/assets';
 import { useProgress } from '../engine/progress';
 import styles from './StickerBook.module.css';
 
@@ -24,7 +24,13 @@ export function StickerBook() {
               key={theme.id}
               className={[styles.slot, owned ? '' : styles.locked].filter(Boolean).join(' ')}
             >
-              <img src={assetPath('stickers', `${theme.id}.svg`)} alt="" />
+              <img
+                src={assets.ui.medal}
+                alt=""
+                decoding="async"
+                draggable={false}
+                style={{ opacity: owned ? 1 : 0.25 }}
+              />
               <span className={styles.label}>
                 {owned ? theme.sticker.name[lang] : theme.title[lang]}
               </span>

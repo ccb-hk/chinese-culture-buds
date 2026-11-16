@@ -3,7 +3,7 @@ import { BigButton } from '../components/BigButton';
 import { Guide } from '../components/Guide';
 import { Subtitle } from '../components/Subtitle';
 import { TopBar } from '../components/TopBar';
-import { assetPath } from '../engine/assets';
+import { assets } from '../content/assets';
 import { playLine, playSfx } from '../engine/audio';
 import { navigate } from '../engine/routing';
 import { useIdleHint } from '../engine/useIdleHint';
@@ -13,6 +13,15 @@ type Ingredient = 'leaf' | 'rice' | 'filling_yolk' | 'filling_redbean' | 'fillin
 type Phase = 'make' | 'steam' | 'done';
 
 const FILLINGS: Ingredient[] = ['filling_yolk', 'filling_redbean', 'filling_mungbean'];
+
+const RACK_IMG: Record<Ingredient | 'string', string> = {
+  leaf: assets.dragonboat.zongzi.leaf,
+  rice: assets.dragonboat.zongzi.rice,
+  filling_yolk: assets.dragonboat.zongzi.fillingYolk,
+  filling_redbean: assets.dragonboat.zongzi.fillingRedbean,
+  filling_mungbean: assets.dragonboat.zongzi.fillingMungbean,
+  string: assets.dragonboat.zongzi.string,
+};
 
 type Props = {
   onComplete: () => void;
@@ -28,7 +37,8 @@ export function ZongziGame({ onComplete }: Props) {
 
   const hasLeaf = bowl.includes('leaf');
   const hasRice = bowl.includes('rice');
-  const hasFilling = bowl.some((i) => FILLINGS.includes(i));
+  const filling = bowl.find((i) => FILLINGS.includes(i));
+  const hasFilling = Boolean(filling);
 
   const nextExpected = useMemo(() => {
     if (!hasLeaf) return 'leaf' as const;
@@ -71,7 +81,7 @@ export function ZongziGame({ onComplete }: Props) {
     let ok = false;
     if (item === 'leaf' && !hasLeaf) ok = true;
     else if (item === 'rice' && hasLeaf && !hasRice) ok = true;
-    else if (isFilling && hasLeaf && hasRice) ok = true;
+    else if (isFilling && hasLeaf && hasRice && !hasFilling) ok = true;
 
     if (!ok) {
       setPose('tilt');
@@ -98,7 +108,7 @@ export function ZongziGame({ onComplete }: Props) {
       setPose('cheer');
       void playLine('db_zongzi_done');
       playSfx('cheer');
-    }, 3000);
+    }, 3200);
   };
 
   const reset = () => {
@@ -119,6 +129,15 @@ export function ZongziGame({ onComplete }: Props) {
     'filling_mungbean',
   ];
 
+  const fillingSrc =
+    filling === 'filling_yolk'
+      ? assets.dragonboat.zongzi.fillingYolk
+      : filling === 'filling_redbean'
+        ? assets.dragonboat.zongzi.fillingRedbean
+        : filling === 'filling_mungbean'
+          ? assets.dragonboat.zongzi.fillingMungbean
+          : null;
+
   return (
     <div className={styles.page}>
       <TopBar backTo="theme" themeId="dragonboat" />
@@ -130,26 +149,81 @@ export function ZongziGame({ onComplete }: Props) {
       </div>
 
       <div className={styles.center}>
-        {phase === 'steam' && <div className={styles.steam}>💨 蒸緊…</div>}
-        {phase === 'done' ? (
+        <div className={styles.bowl} aria-label="大碗">
           <img
-            className={styles.doneImg}
-            src={assetPath('dragonboat/zongzi', 'zongzi_done.svg')}
+            className={styles.bowlImg}
+            src={assets.dragonboat.zongzi.bowl}
             alt=""
+            decoding="async"
+            draggable={false}
           />
-        ) : (
-          <div className={styles.bowl} aria-label="大碗">
-            <div className={styles.stack}>
-              {bowl.map((item, i) => (
+          <div className={styles.stack}>
+            {/* leaf → step_rice → filling → zongzi_done → steamer → zongzi_cooked */}
+            {hasLeaf && phase === 'make' && (
+              <img
+                className={styles.layer}
+                src={assets.dragonboat.zongzi.leaf}
+                alt=""
+                decoding="async"
+                draggable={false}
+              />
+            )}
+            {hasRice && phase === 'make' && (
+              <img
+                className={`${styles.layer} ${styles.layerRice}`}
+                src={assets.dragonboat.zongzi.stepRice}
+                alt=""
+                decoding="async"
+                draggable={false}
+              />
+            )}
+            {fillingSrc && phase === 'make' && (
+              <img
+                className={`${styles.layer} ${styles.layerFilling}`}
+                src={fillingSrc}
+                alt=""
+                decoding="async"
+                draggable={false}
+              />
+            )}
+            {(phase === 'steam' || phase === 'done') && (
+              <img
+                className={`${styles.layer} ${styles.layerDone}`}
+                src={assets.dragonboat.zongzi.zongziDone}
+                alt=""
+                decoding="async"
+                draggable={false}
+              />
+            )}
+            {phase === 'steam' && (
+              <>
                 <img
-                  key={`${item}-${i}`}
-                  src={assetPath('dragonboat/zongzi', `${item}.svg`)}
+                  className={styles.steamer}
+                  src={assets.dragonboat.zongzi.steamer}
                   alt=""
+                  decoding="async"
+                  draggable={false}
                 />
-              ))}
-            </div>
+                <div className={styles.smoke} aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                </div>
+              </>
+            )}
+            {phase === 'done' && (
+              <img
+                className={`${styles.layer} ${styles.layerCooked}`}
+                src={assets.dragonboat.zongzi.zongziCooked}
+                alt=""
+                decoding="async"
+                draggable={false}
+              />
+            )}
           </div>
-        )}
+        </div>
+
+        {phase === 'steam' && <p className={styles.steamLabel}>蒸緊…</p>}
 
         {phase === 'make' && (
           <button
@@ -158,7 +232,15 @@ export function ZongziGame({ onComplete }: Props) {
             onClick={tie}
             disabled={!tieReady}
           >
-            綁繩 🎀
+            <img
+              src={RACK_IMG.string}
+              alt=""
+              width={36}
+              height={36}
+              decoding="async"
+              draggable={false}
+            />
+            綁繩
           </button>
         )}
       </div>
@@ -170,7 +252,8 @@ export function ZongziGame({ onComplete }: Props) {
             type="button"
             className={[
               styles.item,
-              hintId === item || (hintId === 'filling_yolk' && FILLINGS.includes(item) && !hasFilling)
+              hintId === item ||
+              (hintId === 'filling_yolk' && FILLINGS.includes(item) && !hasFilling)
                 ? styles.hintGlow
                 : '',
             ]
@@ -179,7 +262,14 @@ export function ZongziGame({ onComplete }: Props) {
             disabled={phase !== 'make'}
             onClick={() => tryAdd(item)}
           >
-            <img src={assetPath('dragonboat/zongzi', `${item}.svg`)} alt="" />
+            <img
+              src={RACK_IMG[item]}
+              alt=""
+              width={70}
+              height={70}
+              decoding="async"
+              draggable={false}
+            />
           </button>
         ))}
       </div>

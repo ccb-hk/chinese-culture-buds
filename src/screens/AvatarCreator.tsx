@@ -5,7 +5,7 @@ import { Avatar } from '../components/Avatar';
 import { BigButton } from '../components/BigButton';
 import { Subtitle } from '../components/Subtitle';
 import { TopBar } from '../components/TopBar';
-import { assetPath } from '../engine/assets';
+import { avatarHeadSrc } from '../content/assets';
 import { playLine, playSfx, speakText, unlockAudio } from '../engine/audio';
 import { useProgress } from '../engine/progress';
 import { navigate } from '../engine/routing';
@@ -74,7 +74,7 @@ export function AvatarCreator() {
           <div className={styles.actions}>
             <BigButton onClick={() => setStep('head')}>下一步</BigButton>
             <BigButton
-              variant="ghost"
+              variant="secondary"
               onClick={() => {
                 setName('小朋友');
                 setStep('head');
@@ -105,7 +105,12 @@ export function AvatarCreator() {
                 }}
                 aria-label={opt.name[lang]}
               >
-                <img src={assetPath('avatar/head', `${opt.id}.svg`)} alt="" />
+                <img
+                  src={avatarHeadSrc(opt.id)}
+                  alt=""
+                  decoding="async"
+                  draggable={false}
+                />
               </button>
             ))}
           </div>

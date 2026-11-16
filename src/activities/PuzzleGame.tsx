@@ -3,7 +3,7 @@ import { BigButton } from '../components/BigButton';
 import { Guide } from '../components/Guide';
 import { Subtitle } from '../components/Subtitle';
 import { TopBar } from '../components/TopBar';
-import { assetPath } from '../engine/assets';
+import { assets } from '../content/assets';
 import { playLine, playSfx } from '../engine/audio';
 import { useDrag } from '../engine/useDrag';
 import { useIdleHint } from '../engine/useIdleHint';
@@ -69,7 +69,8 @@ export function PuzzleGame({ onComplete }: Props) {
     puzzleIndexRef.current = puzzleIndex;
   }, [puzzleIndex]);
 
-  const imageSrc = assetPath('midautumn/puzzle', `puzzle_${puzzleIndex + 1}.svg`);
+  const imageSrc =
+    puzzleIndex === 0 ? assets.midautumn.puzzle.puzzle1 : assets.midautumn.puzzle.puzzle2;
 
   const frameOrigin = useMemo(
     () => ({
@@ -149,7 +150,7 @@ export function PuzzleGame({ onComplete }: Props) {
       <Subtitle />
       <Guide id="puff" pose={celebrate ? 'cheer' : 'talk'} size={90} />
       <h1 className={styles.title}>中秋團圓小拼圖（{puzzleIndex + 1}/2）</h1>
-      {celebrate && <div className={styles.doneBanner}>拼好啦！✨</div>}
+      {celebrate && <div className={styles.doneBanner}>拼好啦！</div>}
 
       <div
         className={`${styles.board} drag-surface`}
@@ -158,10 +159,8 @@ export function PuzzleGame({ onComplete }: Props) {
         <div className={styles.frame} style={{ width: FRAME, height: FRAME }}>
           <div
             className={styles.ghost}
-            style={{
-              backgroundImage: `url(${imageSrc})`,
-              backgroundSize: '200% 200%',
-            }}
+            style={{ backgroundImage: `url(${imageSrc})` }}
+            aria-hidden
           />
           {PIECES.map((id) => (
             <div

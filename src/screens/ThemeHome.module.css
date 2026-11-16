@@ -2,13 +2,16 @@
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 88px 20px 28px;
+  max-height: 100%;
+  padding: 72px 20px 12px;
+  padding-bottom: calc(12px + var(--subtitle-clearance, 0px));
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   overflow: auto;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .hero {
@@ -35,7 +38,9 @@
 .card {
   min-height: 140px;
   border-radius: 24px;
-  background: #fff;
+  background-color: #fff8ef;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   box-shadow: 0 6px 0 rgba(58, 42, 26, 0.12);
   padding: 18px 14px;
   display: flex;
@@ -55,7 +60,10 @@
 }
 
 .icon {
-  font-size: 36px;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .check {
@@ -122,4 +130,34 @@
   font-size: 20px;
   color: var(--color-text-soft);
   margin-top: 24px;
+}
+
+/* iPad landscape 1024×768 / 1180×820 */
+@media (max-height: 820px) and (orientation: landscape) {
+  .page {
+    padding: 64px 14px 8px;
+    padding-bottom: calc(8px + var(--subtitle-clearance, 0px));
+    gap: 8px;
+  }
+
+  .title {
+    font-size: clamp(22px, 3.2vw, 30px);
+  }
+
+  .cards {
+    gap: 10px;
+    margin-top: 0;
+  }
+
+  .card {
+    min-height: 108px;
+    padding: 10px 12px;
+    font-size: 18px;
+    border-radius: 18px;
+  }
+
+  .icon {
+    width: 44px;
+    height: 44px;
+  }
 }

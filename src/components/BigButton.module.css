@@ -1,50 +1,67 @@
 .button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-width: var(--touch-min);
+  min-width: calc(var(--touch-min) * 1.6);
   min-height: var(--touch-min);
-  padding: 14px 28px;
-  border-radius: 24px;
-  background: var(--color-primary);
-  color: #fff;
+  padding: 14px 32px;
+  border-radius: 28px;
+  background: transparent;
+  color: var(--color-text);
   font-size: 22px;
   font-weight: 700;
-  box-shadow: 0 6px 0 var(--color-primary-deep);
-  transition: transform 0.12s ease, filter 0.12s ease;
+  overflow: hidden;
+  transition: transform 0.12s ease;
 }
 
 .button:active {
-  transform: translateY(3px) scale(0.98);
-  box-shadow: 0 3px 0 var(--color-primary-deep);
+  transform: translateY(2px) scale(0.98);
 }
 
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: none;
+}
+
+.skin {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .secondary {
-  background: #fff;
   color: var(--color-text);
-  box-shadow: 0 6px 0 rgba(58, 42, 26, 0.12);
 }
 
-.secondary:active {
-  box-shadow: 0 3px 0 rgba(58, 42, 26, 0.12);
+.secondary .label {
+  text-shadow: none;
 }
 
 .ghost {
-  background: rgba(255, 255, 255, 0.55);
-  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.45);
   box-shadow: none;
+  overflow: visible;
+}
+
+.ghost .skin {
+  display: none;
 }
 
 .whiteboard {
-  min-width: calc(var(--touch-min) * 1.25);
+  min-width: calc(var(--touch-min) * 1.8);
   min-height: calc(var(--touch-min) * 1.25);
   font-size: 26px;
-  padding: 16px 32px;
+  padding: 16px 36px;
 }

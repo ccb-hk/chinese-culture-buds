@@ -2,29 +2,58 @@
   position: relative;
   display: inline-block;
   line-height: 0;
+  overflow: visible;
+  /* Room above the body for the head (~70% of body width ≈ square head) */
+  padding-top: 62%;
 }
 
-.layer {
-  position: absolute;
-  inset: 0;
+.figure {
+  position: relative;
   width: 100%;
-  height: 100%;
-  pointer-events: none;
-  user-select: none;
 }
 
 .body {
-  position: relative;
+  display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+/* Anchored to the displayed body box (figure === body layout size). */
+.headAnchor {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 70%;
+  transform: translateX(-50%);
+  z-index: 2;
   pointer-events: none;
 }
 
+.headMotion {
+  position: relative;
+  width: 100%;
+  transform-origin: center bottom;
+}
+
 .head {
-  top: -8%;
-  height: 58%;
-  width: 78%;
-  left: 11%;
-  right: auto;
-  bottom: auto;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* Single bow, top-right of head */
+.bow {
+  position: absolute;
+  top: 2%;
+  right: 4%;
+  width: 26%;
+  height: auto;
+  object-fit: contain;
+  z-index: 3;
+  transform: rotate(8deg);
 }

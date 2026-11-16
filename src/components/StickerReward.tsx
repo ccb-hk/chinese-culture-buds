@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { assetPath } from '../engine/assets';
+import { assets } from '../content/assets';
 import { navigate } from '../engine/routing';
 import { BigButton } from './BigButton';
 import { Confetti } from './Confetti';
@@ -11,7 +11,7 @@ type Props = {
   title: string;
 };
 
-export function StickerReward({ open, themeId, title }: Props) {
+export function StickerReward({ open, title }: Props) {
   if (!open) return null;
 
   return (
@@ -19,8 +19,10 @@ export function StickerReward({ open, themeId, title }: Props) {
       <Confetti active />
       <motion.img
         className={styles.sticker}
-        src={assetPath('stickers', `${themeId}.svg`)}
+        src={assets.ui.medal}
         alt=""
+        decoding="async"
+        draggable={false}
         initial={{ scale: 0.2, rotate: -20, opacity: 0 }}
         animate={{ scale: 1, rotate: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 220, damping: 16 }}

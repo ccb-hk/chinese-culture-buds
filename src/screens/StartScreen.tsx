@@ -45,15 +45,12 @@ export function StartScreen() {
         <p className={styles.hint}>一齊嚟認識中華文化啦！</p>
       )}
 
-      <BigButton onClick={() => void start()}>▶ 開始</BigButton>
-
-      <button
-        type="button"
-        className={styles.parents}
-        onClick={() => navigate({ name: 'parents' })}
-      >
-        家長／老師
-      </button>
+      <div className={styles.actions}>
+        <BigButton onClick={() => void start()}>開始</BigButton>
+        <BigButton variant="secondary" onClick={() => navigate({ name: 'parents' })}>
+          家長／老師
+        </BigButton>
+      </div>
     </div>
   );
 }

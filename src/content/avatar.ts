@@ -1,10 +1,61 @@
-import type { HeadId, LocalizedText } from './types';
+import type { Gender, HeadId, LocalizedText, OutfitId } from './types';
 
 export type AvatarHeadOption = {
   id: HeadId;
   name: LocalizedText;
   intro: LocalizedText;
 };
+
+/** Head overlay anchors as percentages of the body image box. */
+export type AvatarHeadAnchor = {
+  headCenterX: number;
+  headCenterY: number;
+  headWidth: number;
+  neckYRatio: number;
+};
+
+export const avatarHeadAnchors: Record<`${OutfitId}_${Gender}`, AvatarHeadAnchor> = {
+  daily_boy: {
+    headCenterX: 0.4977,
+    headCenterY: 0.02,
+    headWidth: 0.7,
+    neckYRatio: 0.4788,
+  },
+  midautumn_boy: {
+    headCenterX: 0.5686,
+    headCenterY: 0.02,
+    headWidth: 0.7,
+    neckYRatio: 0.4772,
+  },
+  dragonboat_boy: {
+    headCenterX: 0.5512,
+    headCenterY: 0.02,
+    headWidth: 0.7,
+    neckYRatio: 0.4802,
+  },
+  daily_girl: {
+    headCenterX: 0.4953,
+    headCenterY: 0.02,
+    headWidth: 0.7,
+    neckYRatio: 0.4768,
+  },
+  midautumn_girl: {
+    headCenterX: 0.5709,
+    headCenterY: 0.02,
+    headWidth: 0.7,
+    neckYRatio: 0.4768,
+  },
+  dragonboat_girl: {
+    headCenterX: 0.5512,
+    headCenterY: 0.02,
+    headWidth: 0.7,
+    neckYRatio: 0.4799,
+  },
+};
+
+export function getAvatarAnchor(outfit: OutfitId, gender: Gender): AvatarHeadAnchor {
+  return avatarHeadAnchors[`${outfit}_${gender}`];
+}
 
 export const avatarHeads: AvatarHeadOption[] = [
   {

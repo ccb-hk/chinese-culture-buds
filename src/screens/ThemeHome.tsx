@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { accessConfig, isActivityLocked } from '../config/access';
 import { appConfig } from '../config/app';
+import { activityIconSrc, assets } from '../content/assets';
 import { getTheme } from '../content/themes';
+import type { GuidePose } from '../components/Guide';
 import { Avatar } from '../components/Avatar';
 import { BigButton } from '../components/BigButton';
 import { Guide } from '../components/Guide';
@@ -17,14 +19,6 @@ import styles from './ThemeHome.module.css';
 
 type Props = { themeId: string };
 
-const ACTIVITY_ICON: Record<string, string> = {
-  story: '▶',
-  lantern: '🏮',
-  puzzle: '🧩',
-  zongzi: '🍙',
-  race: '🐉',
-};
-
 export function ThemeHome({ themeId }: Props) {
   const theme = getTheme(themeId);
   const { state, dispatch } = useProgress();
@@ -32,6 +26,7 @@ export function ThemeHome({ themeId }: Props) {
   const name = state.profile?.name ?? '小朋友';
   const [rewardOpen, setRewardOpen] = useState(false);
   const [lockFlow, setLockFlow] = useState<'none' | 'gate' | 'survey' | 'paid'>('none');
+  const [guidePose, setGuidePose] = useState<GuidePose>('welcome');
 
   const completedAll = useMemo(() => {
     if (!theme || theme.activities.length === 0) return false;
@@ -40,11 +35,27 @@ export function ThemeHome({ themeId }: Props) {
 
   useEffect(() => {
     if (!theme) return;
-    if (theme.status === 'coming_soon') {
-      playLine('common_coming_soon');
-      return;
-    }
-    playLine(theme.welcomeLine, { name });
+    let cancelled = false;
+    let idleTimer = 0;
+    // Defer so Subtitle can subscribe after route clear, then show welcome caption
+    const startTimer = window.setTimeout(() => {
+      if (cancelled) return;
+      if (theme.status === 'coming_soon') {
+        setGuidePose('hint');
+        void playLine('common_coming_soon');
+        return;
+      }
+      setGuidePose('welcome');
+      void playLine(theme.welcomeLine, { name });
+      idleTimer = window.setTimeout(() => {
+        if (!cancelled) setGuidePose('idle');
+      }, 2800);
+    }, 40);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(startTimer);
+      window.clearTimeout(idleTimer);
+    };
   }, [theme, name]);
 
   useEffect(() => {
@@ -59,9 +70,16 @@ export function ThemeHome({ themeId }: Props) {
   useIdleHint({
     enabled: Boolean(theme) && theme?.status === 'ready' && !rewardOpen && lockFlow === 'none',
     onIdle: () => {
+      setGuidePose('tilt');
       if (theme) playLine(theme.welcomeLine, { name });
     },
   });
+
+  const reactGuide = () => {
+    playSfx('tap');
+    setGuidePose('welcome');
+    window.setTimeout(() => setGuidePose('idle'), 1600);
+  };
 
   if (!theme) {
     return (
@@ -78,7 +96,7 @@ export function ThemeHome({ themeId }: Props) {
         <TopBar backTo="map" />
         <Subtitle />
         <h1 className={styles.title}>{theme.title[lang]}</h1>
-        <Guide id={theme.guide} pose="tilt" size={160} showName />
+        <Guide id={theme.guide} pose={guidePose} size={160} showName onClick={reactGuide} />
         <p className={styles.soon}>即將推出，好快就會開放㗎！</p>
       </div>
     );
@@ -86,6 +104,7 @@ export function ThemeHome({ themeId }: Props) {
 
   const openActivity = (activityId: string, index: number) => {
     playSfx('tap');
+    setGuidePose('idle');
     const locked = isActivityLocked(index, state.surveyUnlocked);
     if (locked) {
       if (accessConfig.mode === 'paid') {
@@ -104,7 +123,7 @@ export function ThemeHome({ themeId }: Props) {
       <Subtitle />
 
       <div className={styles.hero}>
-        <Guide id={theme.guide} pose="talk" size={150} showName />
+        <Guide id={theme.guide} pose={guidePose} size={150} showName onClick={reactGuide} />
         {state.profile && (
           <Avatar
             head={state.profile.head}
@@ -126,12 +145,32 @@ export function ThemeHome({ themeId }: Props) {
               key={activity.id}
               type="button"
               className={[styles.card, locked ? styles.cardLocked : ''].filter(Boolean).join(' ')}
+              style={{ backgroundImage: `url(${assets.ui.card})` }}
               onClick={() => openActivity(activity.id, index)}
             >
-              <span className={styles.icon}>{ACTIVITY_ICON[activity.type] ?? '🎮'}</span>
+              <img
+                className={styles.icon}
+                src={activityIconSrc[activity.type] ?? assets.ui.iconStar}
+                alt=""
+                width={56}
+                height={56}
+                decoding="async"
+                draggable={false}
+              />
               <span>{activity.title[lang]}</span>
               {done && !locked && <span className={styles.check}>✓</span>}
-              {locked && <span className={styles.lock}>🔒</span>}
+              {locked && (
+                <span className={styles.lock} aria-label="未解鎖">
+                  <img
+                    src={assets.ui.iconHome}
+                    alt=""
+                    width={28}
+                    height={28}
+                    decoding="async"
+                    draggable={false}
+                  />
+                </span>
+              )}
             </button>
           );
         })}

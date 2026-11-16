@@ -1,12 +1,48 @@
 import { useEffect, useState } from 'react';
+import { assets } from '../content/assets';
 import styles from './LoadingScreen.module.css';
 
-type Props = {
+type BootProps = {
   minMs?: number;
 };
 
+type OverlayProps = {
+  label?: string;
+};
+
+/** Reusable full-screen loader (theme preload / Suspense). */
+export function LoadingOverlay({ label = '載入緊…' }: OverlayProps) {
+  return (
+    <div className={styles.overlay} aria-busy="true" role="status">
+      <div className={styles.brand}>童心樂中華</div>
+      <div className={styles.mascots} aria-hidden>
+        <img
+          src={assets.characters.puff.wave}
+          alt=""
+          width={120}
+          height={120}
+          decoding="async"
+          draggable={false}
+        />
+        <img
+          src={assets.characters.dongdong.wave}
+          alt=""
+          width={120}
+          height={120}
+          decoding="async"
+          draggable={false}
+        />
+      </div>
+      <div className={styles.bar}>
+        <div className={styles.fill} />
+      </div>
+      <p className={styles.hint}>{label}</p>
+    </div>
+  );
+}
+
 /** Brief splash while fonts / first paint settle. */
-export function LoadingScreen({ minMs = 900 }: Props) {
+export function LoadingScreen({ minMs = 900 }: BootProps) {
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
@@ -23,13 +59,17 @@ export function LoadingScreen({ minMs = 900 }: Props) {
       }, wait);
     };
 
+    // Warm shared chrome early
+    void import('../engine/preload').then(({ preloadImages, themeAssetUrls }) =>
+      preloadImages(themeAssetUrls('map')),
+    );
+
     if (document.fonts?.ready) {
       void document.fonts.ready.then(finish).catch(finish);
     } else {
       finish();
     }
 
-    // Warm TTS voice list (iOS / Chrome)
     try {
       window.speechSynthesis?.getVoices();
     } catch {
@@ -47,8 +87,22 @@ export function LoadingScreen({ minMs = 900 }: Props) {
     <div className={[styles.overlay, fading ? styles.fadeOut : ''].join(' ')} aria-busy="true">
       <div className={styles.brand}>童心樂中華</div>
       <div className={styles.mascots} aria-hidden>
-        <span>🐰</span>
-        <span>🐉</span>
+        <img
+          src={assets.characters.puff.wave}
+          alt=""
+          width={120}
+          height={120}
+          decoding="async"
+          draggable={false}
+        />
+        <img
+          src={assets.characters.dongdong.wave}
+          alt=""
+          width={120}
+          height={120}
+          decoding="async"
+          draggable={false}
+        />
       </div>
       <div className={styles.bar}>
         <div className={styles.fill} />

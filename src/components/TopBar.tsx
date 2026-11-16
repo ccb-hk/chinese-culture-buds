@@ -1,3 +1,4 @@
+import { assets } from '../content/assets';
 import { playSfx } from '../engine/audio';
 import { navigate } from '../engine/routing';
 import { useProgress } from '../engine/progress';
@@ -30,7 +31,14 @@ export function TopBar({ backTo = 'map', themeId, showBack = true }: Props) {
     <header className={[styles.bar, wb ? styles.whiteboard : ''].filter(Boolean).join(' ')}>
       {showBack ? (
         <button type="button" className={styles.iconBtn} aria-label="返回" onClick={goBack}>
-          ←
+          <img
+            src={assets.ui.iconBack}
+            alt=""
+            width={48}
+            height={48}
+            decoding="async"
+            draggable={false}
+          />
         </button>
       ) : (
         <span />
@@ -39,7 +47,9 @@ export function TopBar({ backTo = 'map', themeId, showBack = true }: Props) {
       <div className={styles.right}>
         <button
           type="button"
-          className={styles.iconBtn}
+          className={[styles.iconBtn, state.settings.sound ? '' : styles.muted]
+            .filter(Boolean)
+            .join(' ')}
           aria-label={state.settings.sound ? '靜音' : '開啟聲音'}
           onClick={() => {
             dispatch({
@@ -49,11 +59,20 @@ export function TopBar({ backTo = 'map', themeId, showBack = true }: Props) {
             playSfx('tap');
           }}
         >
-          {state.settings.sound ? '🔊' : '🔇'}
+          <img
+            src={assets.ui.iconSound}
+            alt=""
+            width={48}
+            height={48}
+            decoding="async"
+            draggable={false}
+          />
         </button>
         <button
           type="button"
-          className={styles.iconBtn}
+          className={[styles.iconBtn, state.settings.subtitles ? '' : styles.muted]
+            .filter(Boolean)
+            .join(' ')}
           aria-label={state.settings.subtitles ? '關閉字幕' : '開啟字幕'}
           onClick={() => {
             dispatch({
@@ -63,7 +82,7 @@ export function TopBar({ backTo = 'map', themeId, showBack = true }: Props) {
             playSfx('tap');
           }}
         >
-          {state.settings.subtitles ? '字' : '字̸'}
+          <span className={styles.subLabel}>字</span>
         </button>
       </div>
     </header>

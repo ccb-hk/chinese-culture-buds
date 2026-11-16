@@ -4,10 +4,25 @@ import { BigButton } from '../components/BigButton';
 import { Guide } from '../components/Guide';
 import { Subtitle } from '../components/Subtitle';
 import { TopBar } from '../components/TopBar';
-import { assetPath } from '../engine/assets';
+import { assets } from '../content/assets';
 import { playLine, playSfx } from '../engine/audio';
 import { useIdleHint } from '../engine/useIdleHint';
 import styles from './LanternGame.module.css';
+
+const LANTERN_SHAPE = {
+  round: assets.midautumn.lantern.shapeRound,
+  rabbit: assets.midautumn.lantern.shapeRabbit,
+  star: assets.midautumn.lantern.shapeStar,
+} as const;
+
+const LANTERN_STICKER = {
+  rabbit: assets.midautumn.lantern.stickerRabbit,
+  mooncake: assets.midautumn.lantern.stickerMooncake,
+  pomelo: assets.midautumn.lantern.stickerPomelo,
+  star: assets.midautumn.lantern.stickerStar,
+  moon: assets.midautumn.lantern.stickerMoon,
+  osmanthus: assets.midautumn.lantern.stickerOsmanthus,
+} as const;
 
 type ShapeId = 'round' | 'rabbit' | 'star';
 type StickerId = 'rabbit' | 'mooncake' | 'pomelo' | 'star' | 'moon' | 'osmanthus';
@@ -34,6 +49,7 @@ export function LanternGame({ onComplete }: Props) {
   const [lightHintPlayed, setLightHintPlayed] = useState(false);
 
   const placedCount = placed.filter(Boolean).length;
+  const isLit = step === 'lit' || step === 'done';
 
   useEffect(() => {
     if (step === 'shape') void playLine('ma_lantern_shape');
@@ -72,10 +88,10 @@ export function LanternGame({ onComplete }: Props) {
   };
 
   return (
-    <div className={[styles.page, step === 'lit' || step === 'done' ? styles.night : styles.day].join(' ')}>
+    <div className={[styles.page, isLit ? styles.night : styles.day].join(' ')}>
       <TopBar backTo="theme" themeId="midautumn" />
       <Subtitle />
-      <Guide id="puff" pose={step === 'lit' ? 'cheer' : 'idle'} size={100} />
+      <Guide id="puff" pose={isLit ? 'cheer' : 'idle'} size={88} />
 
       {step === 'shape' && (
         <>
@@ -92,7 +108,14 @@ export function LanternGame({ onComplete }: Props) {
                   setStep('decorate');
                 }}
               >
-                <img src={assetPath('midautumn/lantern', `shape_${s.id}.svg`)} alt="" />
+                <img
+                  src={LANTERN_SHAPE[s.id]}
+                  alt=""
+                  width={100}
+                  height={110}
+                  decoding="async"
+                  draggable={false}
+                />
                 {s.label}
               </button>
             ))}
@@ -100,43 +123,53 @@ export function LanternGame({ onComplete }: Props) {
         </>
       )}
 
-      {(step === 'decorate' || step === 'lit' || step === 'done') && shape && (
+      {(step === 'decorate' || isLit) && shape && (
         <>
-          <h1 className={styles.title}>
-            {step === 'decorate' ? '裝飾你嘅燈籠' : '好靚呀！'}
-          </h1>
-          <div className={`${styles.stage} ${step === 'lit' || step === 'done' ? styles.lit : ''}`}>
+          <h1 className={styles.title}>{step === 'decorate' ? '裝飾你嘅燈籠' : '好靚呀！'}</h1>
+          <div className={`${styles.stage} ${isLit ? styles.lit : ''}`}>
             <div className={styles.moon} aria-hidden>
-              🌙
+              <img
+                src={assets.midautumn.props.starOn}
+                alt=""
+                width={56}
+                height={56}
+                decoding="async"
+                draggable={false}
+              />
             </div>
-            <motion.img
-              className={styles.lantern}
-              src={assetPath('midautumn/lantern', `shape_${shape}.svg`)}
-              alt=""
-              layoutId="lantern"
-            />
-            <div className={styles.slots}>
-              {placed.map((sticker, i) => (
-                <div key={i} className={styles.slot}>
-                  {sticker && (
-                    <motion.img
-                      src={assetPath('midautumn/lantern', `sticker_${sticker}.svg`)}
-                      alt=""
-                      initial={{ scale: 0.4, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ type: 'spring', stiffness: 320, damping: 16 }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+            <motion.div className={styles.lanternWrap} layoutId="lantern">
+              <img
+                className={styles.lantern}
+                src={LANTERN_SHAPE[shape]}
+                alt=""
+                decoding="async"
+                draggable={false}
+              />
+              <div className={styles.slots}>
+                {placed.map((sticker, i) => (
+                  <div key={i} className={styles.slot}>
+                    {sticker && (
+                      <motion.img
+                        src={LANTERN_STICKER[sticker]}
+                        alt=""
+                        decoding="async"
+                        draggable={false}
+                        initial={{ scale: 0.4, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ type: 'spring', stiffness: 320, damping: 16 }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </>
       )}
 
       {step === 'decorate' && (
         <>
-          <div className={styles.palette}>
+          <div className={styles.palette} role="listbox" aria-label="貼紙">
             {STICKERS.map((id) => (
               <button
                 key={id}
@@ -146,21 +179,35 @@ export function LanternGame({ onComplete }: Props) {
                 onClick={() => placeSticker(id)}
                 aria-label={id}
               >
-                <img src={assetPath('midautumn/lantern', `sticker_${id}.svg`)} alt="" />
+                <img
+                  src={LANTERN_STICKER[id]}
+                  alt=""
+                  width={70}
+                  height={70}
+                  decoding="async"
+                  draggable={false}
+                />
               </button>
             ))}
           </div>
           <div className={styles.actions}>
             {placedCount >= MIN_STICKERS && (
               <button type="button" className={styles.bulb} onClick={lightUp} aria-label="點亮燈籠">
-                💡
+                <img
+                  src={assets.ui.iconStar}
+                  alt=""
+                  width={48}
+                  height={48}
+                  decoding="async"
+                  draggable={false}
+                />
               </button>
             )}
           </div>
         </>
       )}
 
-      {(step === 'lit' || step === 'done') && (
+      {isLit && (
         <div className={styles.actions}>
           <BigButton
             onClick={() => {

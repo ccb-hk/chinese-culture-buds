@@ -1,10 +1,10 @@
-import { motion, type TargetAndTransition } from 'framer-motion';
-import { assetPath } from '../engine/assets';
+import { AnimatePresence, motion, type TargetAndTransition } from 'framer-motion';
+import { guidePoseSrc, type GuideCharacterId, type GuidePoseId } from '../content/assets';
 import { playSfx } from '../engine/audio';
 import styles from './Guide.module.css';
 
-export type GuideId = 'puff' | 'dongdong';
-export type GuidePose = 'idle' | 'talk' | 'cheer' | 'tilt';
+export type GuideId = GuideCharacterId;
+export type GuidePose = GuidePoseId;
 
 type Props = {
   id: GuideId;
@@ -17,28 +17,43 @@ type Props = {
 const NAMES: Record<GuideId, string> = {
   puff: '胖胖',
   dongdong: '咚咚',
+  houyi: '后羿',
+  change: '嫦娥',
+  quyuan: '屈原',
 };
 
 const poseAnim: Record<GuidePose, TargetAndTransition> = {
   idle: {
-    y: [0, -6, 0],
-    rotate: [0, -2, 2, 0],
-    transition: { duration: 2.4, repeat: Infinity, ease: 'easeInOut' },
+    scale: [1, 1.02, 1],
+    transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
   },
   talk: {
-    rotate: [0, -4, 4, -2, 2, 0],
-    transition: { duration: 0.8, repeat: Infinity },
+    y: [0, -5, 0, -3, 0],
+    transition: { duration: 0.7, repeat: Infinity, ease: 'easeInOut' },
+  },
+  welcome: {
+    y: [0, -10, 0, -6, 0],
+    rotate: [0, -4, 4, 0],
+    scale: [1, 1.05, 1],
+    transition: { duration: 0.9, repeat: Infinity, ease: 'easeInOut' },
   },
   cheer: {
-    scale: [1, 1.12, 1],
-    rotate: [0, -8, 8, 0],
-    transition: { duration: 0.7, repeat: Infinity },
+    scale: [1, 1.06, 1],
+    y: [0, -4, 0],
+    transition: { duration: 0.65, repeat: Infinity },
+  },
+  hint: {
+    rotate: [0, -8, -4, -8],
+    transition: { duration: 1.2, repeat: Infinity, ease: 'easeInOut' },
   },
   tilt: {
-    rotate: [0, -12, -8, -12],
+    rotate: [0, -8, -4, -8],
     transition: { duration: 1.2, repeat: Infinity, ease: 'easeInOut' },
   },
 };
+
+const CONFETTI = ['#f5a623', '#e85d4c', '#5bbf7a', '#5b8def', '#f7d06a'];
+const CROSSFADE_MS = 0.15;
 
 export function Guide({
   id,
@@ -47,6 +62,9 @@ export function Guide({
   showName = false,
   onClick,
 }: Props) {
+  const src = guidePoseSrc(id, pose);
+  const showConfetti = pose === 'cheer';
+
   return (
     <button
       type="button"
@@ -58,14 +76,42 @@ export function Guide({
         onClick?.();
       }}
     >
-      <motion.img
-        className={styles.img}
-        src={assetPath('characters', `${id}.svg`)}
-        alt=""
-        draggable={false}
-        animate={poseAnim[pose]}
+      <motion.div
+        className={styles.stage}
         style={{ width: size, height: size }}
-      />
+        animate={poseAnim[pose]}
+      >
+        {/* Crossfade: old + new overlap; no empty transparent frame */}
+        <AnimatePresence initial={false}>
+          <motion.img
+            key={src}
+            className={styles.img}
+            src={src}
+            alt=""
+            width={size}
+            height={size}
+            decoding="async"
+            draggable={false}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: CROSSFADE_MS, ease: 'easeInOut' }}
+          />
+        </AnimatePresence>
+        {showConfetti && (
+          <div className={styles.confetti} aria-hidden>
+            {CONFETTI.map((color, i) => (
+              <motion.span
+                key={color}
+                className={styles.confettiBit}
+                style={{ background: color, left: `${12 + i * 18}%` }}
+                animate={{ y: [0, -36 - i * 4, 8], opacity: [0, 1, 0], rotate: [0, 120] }}
+                transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.08 }}
+              />
+            ))}
+          </div>
+        )}
+      </motion.div>
       {showName && <span className={styles.label}>{NAMES[id]}</span>}
     </button>
   );

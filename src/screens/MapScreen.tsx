@@ -1,56 +1,71 @@
+import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { themes } from '../content/themes';
+import { assets } from '../content/assets';
+import { mapHubStand, mapIslands, type MapPoint } from '../content/map';
+import { getTheme, themes } from '../content/themes';
 import { Avatar } from '../components/Avatar';
 import { BigButton } from '../components/BigButton';
 import { Subtitle } from '../components/Subtitle';
 import { TopBar } from '../components/TopBar';
-import { assetPath } from '../engine/assets';
 import { playLine, playSfx } from '../engine/audio';
 import { useProgress } from '../engine/progress';
 import { navigate } from '../engine/routing';
 import styles from './MapScreen.module.css';
 
-/** Approximate pin positions on the map (percent). */
-const PIN_POS: Record<string, { left: string; top: string }> = {
-  newyear: { left: '16%', top: '68%' },
-  midautumn: { left: '40%', top: '58%' },
-  dragonboat: { left: '63%', top: '68%' },
-  yumcha: { left: '85%', top: '60%' },
-};
+const WALK_MS = 900;
+
+const SPARKLES = [
+  { left: '22%', top: '72%', delay: 0 },
+  { left: '38%', top: '78%', delay: 0.4 },
+  { left: '55%', top: '74%', delay: 0.8 },
+  { left: '70%', top: '80%', delay: 0.2 },
+  { left: '85%', top: '70%', delay: 1.1 },
+  { left: '12%', top: '62%', delay: 0.6 },
+];
+
+const CLOUDS = [
+  { left: '8%', top: '12%', w: 140, dur: 28 },
+  { left: '55%', top: '6%', w: 110, dur: 34 },
+  { left: '78%', top: '18%', w: 160, dur: 40 },
+];
 
 export function MapScreen() {
   const { state } = useProgress();
   const profile = state.profile;
-  const [playerPos, setPlayerPos] = useState(PIN_POS.midautumn);
+  const lang = profile?.lang ?? 'yue';
+  const [playerPos, setPlayerPos] = useState<MapPoint>(mapHubStand);
   const [moving, setMoving] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const name = profile?.name ?? '小朋友';
 
-  const pins = useMemo(
+  const islands = useMemo(
     () =>
-      themes.map((theme) => ({
-        theme,
-        pos: PIN_POS[theme.id] ?? { left: '50%', top: '50%' },
-        locked: theme.status === 'coming_soon',
-        done: Boolean(state.stickers[theme.id]),
-      })),
+      mapIslands.map((island) => {
+        const theme = getTheme(island.themeId) ?? themes.find((t) => t.id === island.themeId);
+        const locked = theme?.status === 'coming_soon';
+        const done = Boolean(state.stickers[island.themeId]);
+        return { island, theme, locked: Boolean(locked), done };
+      }),
     [state.stickers],
   );
 
-  const goTheme = (themeId: string, locked: boolean, pos: { left: string; top: string }) => {
+  const goIsland = (themeId: string, locked: boolean, stand: MapPoint) => {
     if (moving) return;
     playSfx('tap');
+    setActiveId(themeId);
     setMoving(true);
-    setPlayerPos(pos);
+    setPlayerPos(stand);
 
     window.setTimeout(() => {
       setMoving(false);
+      setActiveId(null);
       if (locked) {
-        playLine('common_coming_soon');
+        void playLine('common_coming_soon');
         return;
       }
       navigate({ name: 'theme', themeId });
-    }, 750);
+    }, WALK_MS);
   };
 
   return (
@@ -59,42 +74,121 @@ export function MapScreen() {
       <Subtitle />
 
       <div className={styles.stage}>
-        <div className={styles.world}>
-          <img className={styles.bg} src={assetPath('map', 'map_bg.svg')} alt="" />
+        <img
+          className={styles.bg}
+          src={assets.map.bg}
+          alt=""
+          width={1600}
+          height={1000}
+          decoding="async"
+          draggable={false}
+        />
 
-          {pins.map(({ theme, pos, locked, done }) => (
+        <div className={styles.ambient} aria-hidden>
+          {CLOUDS.map((c, i) => (
+            <motion.span
+              key={i}
+              className={styles.cloud}
+              style={{ left: c.left, top: c.top, width: c.w, height: c.w * 0.45 }}
+              animate={{ x: [0, 36, 0] }}
+              transition={{ duration: c.dur, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          ))}
+          {SPARKLES.map((s, i) => (
+            <motion.span
+              key={`sp-${i}`}
+              className={styles.sparkle}
+              style={{ left: s.left, top: s.top }}
+              animate={{ opacity: [0.15, 0.9, 0.15], scale: [0.7, 1.2, 0.7] }}
+              transition={{ duration: 2.4, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+            />
+          ))}
+        </div>
+
+        {/* Whole-island hit targets */}
+        {islands.map(({ island, theme, locked, done }) => {
+          const title = theme?.title[lang] ?? island.label[lang];
+          const glowing = activeId === island.themeId && !locked;
+          return (
             <button
-              key={theme.id}
+              key={island.themeId}
               type="button"
-              className={[styles.pin, locked ? styles.locked : ''].filter(Boolean).join(' ')}
-              style={{ left: pos.left, top: pos.top }}
-              aria-label={theme.title.yue + (locked ? '（即將推出）' : '')}
-              onClick={() => goTheme(theme.id, locked, pos)}
+              className={[
+                styles.island,
+                locked ? styles.islandLocked : '',
+                glowing ? styles.islandGlow : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              style={{
+                left: `${island.hit.cx}%`,
+                top: `${island.hit.cy}%`,
+                width: `${island.hit.rx * 2}%`,
+                height: `${island.hit.ry * 2}%`,
+              }}
+              aria-label={title + (locked ? '（即將推出）' : '')}
+              disabled={moving}
+              onClick={() => goIsland(island.themeId, locked, island.stand)}
             >
-              {locked && <span className={styles.fog} />}
-              <img src={assetPath('map', `pin_${theme.mapPin}.svg`)} alt="" />
-              {locked && <span className={styles.lockBadge}>🔒</span>}
-              {done && (
+              {locked && <span className={styles.cloudCover} aria-hidden />}
+              {locked && (
+                <span className={styles.lockBadge}>
+                  <img
+                    src={assets.ui.iconHome}
+                    alt=""
+                    width={36}
+                    height={36}
+                    decoding="async"
+                    draggable={false}
+                  />
+                </span>
+              )}
+              {done && !locked && (
                 <img
                   className={styles.doneBadge}
-                  src={assetPath('stickers', `${theme.id}.svg`)}
+                  src={assets.ui.medal}
                   alt=""
+                  width={40}
+                  height={40}
+                  decoding="async"
+                  draggable={false}
                 />
               )}
             </button>
-          ))}
+          );
+        })}
 
-          {profile && (
-            <div className={styles.player} style={{ left: playerPos.left, top: playerPos.top }}>
-              <Avatar
-                head={profile.head}
-                gender={profile.gender}
-                outfit="daily"
-                size={88}
-              />
+        {/* Labels above avatar so names are never covered */}
+        {islands.map(({ island, theme, locked }) => {
+          const title = theme?.title[lang] ?? island.label[lang];
+          return (
+            <div
+              key={`label-${island.themeId}`}
+              className={[styles.islandLabel, locked ? styles.labelLocked : '']
+                .filter(Boolean)
+                .join(' ')}
+              style={{ left: `${island.labelPos.x}%`, top: `${island.labelPos.y}%` }}
+            >
+              {title}
             </div>
-          )}
-        </div>
+          );
+        })}
+
+        {profile && (
+          <motion.div
+            className={styles.player}
+            initial={false}
+            animate={{ left: `${playerPos.x}%`, top: `${playerPos.y}%` }}
+            transition={{ duration: WALK_MS / 1000, ease: 'easeInOut' }}
+          >
+            <Avatar
+              head={profile.head}
+              gender={profile.gender}
+              outfit="daily"
+              size={84}
+            />
+          </motion.div>
+        )}
       </div>
 
       <div className={styles.stickersBtn}>
@@ -104,8 +198,10 @@ export function MapScreen() {
       </div>
 
       {!profile && (
-        <div style={{ position: 'absolute', bottom: 90, left: 0, right: 0, textAlign: 'center' }}>
-          <BigButton onClick={() => navigate({ name: 'avatar' })}>先建立角色（{name}）</BigButton>
+        <div className={styles.needAvatar}>
+          <BigButton onClick={() => navigate({ name: 'avatar' })}>
+            先建立角色（{name}）
+          </BigButton>
         </div>
       )}
     </div>

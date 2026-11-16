@@ -11,6 +11,7 @@
   --touch-min: 88px;
   --font-main: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
   --subtitle-size: 28px;
+  --subtitle-clearance: 0px;
 }
 
 *,
@@ -52,6 +53,11 @@ svg {
   pointer-events: none;
 }
 
+/* Art images: prefer explicit attrs in JSX; keep drag off even if omitted */
+img {
+  -webkit-user-drag: none;
+}
+
 button,
 a,
 input,
@@ -87,9 +93,14 @@ textarea {
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background:
     radial-gradient(ellipse at top, var(--color-bg-warm), transparent 55%),
     linear-gradient(160deg, #fff6e8 0%, #ffe4c4 45%, #ffd6a8 100%);
+}
+
+.route-layer {
+  overflow: auto;
 }
 
 .screen {

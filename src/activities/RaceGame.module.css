@@ -8,61 +8,121 @@
 
 .river {
   position: absolute;
-  inset: 0 0 200px 0;
+  inset: 0 0 190px 0;
   overflow: hidden;
 }
 
-.bg {
+.bgTrack {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0 auto 0 0;
   height: 100%;
   width: 200%;
+  display: flex;
+  will-change: transform;
+  transition: transform 0.12s linear;
+}
+
+.bg {
+  flex: 0 0 50%;
+  height: 100%;
+  width: 50%;
   object-fit: cover;
   pointer-events: none;
 }
 
 .boatWrap {
   position: absolute;
-  top: 42%;
+  top: 46%;
   transform: translate(-50%, -50%);
   transition: left 0.15s linear;
   z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: min(42vw, 300px);
+  animation: bob 0.7s ease-in-out infinite;
+}
+
+.boatHit {
+  animation: bobHit 0.28s ease-out;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(-1.2deg);
+  }
+  50% {
+    transform: translate(-50%, calc(-50% - 6px)) rotate(1.2deg);
+  }
+}
+
+@keyframes bobHit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  40% {
+    transform: translate(-50%, calc(-50% - 14px)) rotate(-3deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(1deg);
+  }
 }
 
 .boat {
-  width: min(36vw, 240px);
+  width: 100%;
   height: auto;
+  display: block;
   pointer-events: none;
-  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.22));
+  position: relative;
+  z-index: 1;
 }
 
-.avatar {
+.seats {
   position: absolute;
-  top: -36px;
-  left: 42%;
+  left: 8%;
+  right: 38%;
+  top: 8%;
+  height: 42%;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   pointer-events: none;
+}
+
+.seatPlayer,
+.seatDong {
+  width: 46%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.seatDong img {
+  width: min(18vw, 56px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.2));
 }
 
 .splash {
   position: absolute;
-  bottom: -8px;
-  left: 20%;
-  font-size: 28px;
-  animation: splash 0.4s ease-out;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e1f5fe 0%, #4fc3f7 55%, transparent 70%);
+  pointer-events: none;
+  z-index: 4;
+  animation: splash 0.4s ease-out forwards;
 }
 
 @keyframes splash {
   from {
     opacity: 1;
-    transform: translateY(0) scale(0.8);
+    transform: translateY(0) scale(0.6);
   }
   to {
     opacity: 0;
-    transform: translateY(-20px) scale(1.2);
+    transform: translateY(-28px) scale(1.4);
   }
 }
 
@@ -71,7 +131,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 200px;
+  height: 190px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -79,11 +139,12 @@
   gap: 10px;
   background: linear-gradient(transparent, rgba(1, 87, 155, 0.85));
   z-index: 5;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .drum {
-  width: 180px;
-  height: 180px;
+  width: 168px;
+  height: 168px;
   border-radius: 50%;
   border: none;
   background: transparent;
@@ -133,4 +194,24 @@
 .finish h2 {
   font-size: 36px;
   color: #fff;
+  margin: 0;
+}
+
+@media (max-height: 820px) and (orientation: landscape) {
+  .river {
+    inset: 0 0 160px 0;
+  }
+
+  .controls {
+    height: 160px;
+  }
+
+  .drum {
+    width: 132px;
+    height: 132px;
+  }
+
+  .boatWrap {
+    width: min(36vw, 240px);
+  }
 }

@@ -1,7 +1,9 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { LoadingScreen } from './components/LoadingScreen';
+import { LoadingOverlay, LoadingScreen } from './components/LoadingScreen';
 import { ScreenTransition } from './components/ScreenTransition';
+import { ThemePreloadGate } from './components/ThemePreloadGate';
+import { stopNarration } from './engine/audio';
 import { ProgressProvider } from './engine/progress';
 import { parseHash, routeToHash, type Route } from './engine/routing';
 
@@ -34,14 +36,25 @@ function useHashRoute(): Route {
   const [route, setRoute] = useState<Route>(() => parseHash(window.location.hash));
 
   useEffect(() => {
-    const onHashChange = () => setRoute(parseHash(window.location.hash));
-    window.addEventListener('hashchange', onHashChange);
+    const sync = () => {
+      // Clear previous screen audio/subtitle before the next screen's effects run
+      stopNarration();
+      setRoute(parseHash(window.location.hash));
+    };
+    window.addEventListener('hashchange', sync);
+    window.addEventListener('popstate', sync);
 
     if (!window.location.hash) {
       window.location.hash = '#start';
+    } else {
+      // Ensure first paint matches current hash (e.g. deep link / refresh)
+      setRoute(parseHash(window.location.hash));
     }
 
-    return () => window.removeEventListener('hashchange', onHashChange);
+    return () => {
+      window.removeEventListener('hashchange', sync);
+      window.removeEventListener('popstate', sync);
+    };
   }, []);
 
   return route;
@@ -54,7 +67,11 @@ function ScreenRouter({ route }: { route: Route }) {
     case 'avatar':
       return <AvatarCreator />;
     case 'map':
-      return <MapScreen />;
+      return (
+        <ThemePreloadGate themeId="map">
+          <MapScreen />
+        </ThemePreloadGate>
+      );
     case 'stickers':
       return <StickerBook />;
     case 'parents':
@@ -62,18 +79,26 @@ function ScreenRouter({ route }: { route: Route }) {
     case 'dev':
       return <DevScreen />;
     case 'theme':
-      return <ThemeHome themeId={route.themeId} />;
+      return (
+        <ThemePreloadGate themeId={route.themeId}>
+          <ThemeHome themeId={route.themeId} />
+        </ThemePreloadGate>
+      );
     case 'activity':
-      return <ActivityScreen themeId={route.themeId} activityId={route.activityId} />;
+      return (
+        <ThemePreloadGate themeId={route.themeId}>
+          <ActivityScreen themeId={route.themeId} activityId={route.activityId} />
+        </ThemePreloadGate>
+      );
+    default: {
+      const _exhaustive: never = route;
+      return _exhaustive;
+    }
   }
 }
 
 function RouteFallback() {
-  return (
-    <div className="screen" aria-busy="true">
-      <p>載入畫面…</p>
-    </div>
-  );
+  return <LoadingOverlay label="載入畫面…" />;
 }
 
 function AppShell() {
@@ -83,11 +108,11 @@ function AppShell() {
 
   return (
     <div className="app-shell">
-      <Suspense fallback={<RouteFallback />}>
-        <ScreenTransition routeKey={routeKey}>
-          <ScreenRouter route={route} />
-        </ScreenTransition>
-      </Suspense>
+      <ScreenTransition routeKey={routeKey}>
+        <Suspense fallback={<RouteFallback />}>
+          <ScreenRouter key={routeKey} route={route} />
+        </Suspense>
+      </ScreenTransition>
 
       <div
         className={`orientation-tip${tipDismissed ? ' dismissed' : ''}`}

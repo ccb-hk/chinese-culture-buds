@@ -23,6 +23,7 @@ let unlocked = false;
 let currentVoice: Howl | null = null;
 let bgmHowl: Howl | null = null;
 let subtitleListener: ((text: string | null) => void) | null = null;
+let currentSubtitle: string | null = null;
 
 const missingAudioCache = new Set<string>();
 const synthCtxRef: { current: AudioContext | null } = { current: null };
@@ -41,13 +42,24 @@ export function setAudioSettings(next: Partial<AudioSettings>): void {
 
 export function onSubtitle(listener: (text: string | null) => void): () => void {
   subtitleListener = listener;
+  // Sync current line so late-mounted Subtitle still shows welcome text
+  listener(currentSubtitle);
   return () => {
     if (subtitleListener === listener) subtitleListener = null;
   };
 }
 
 function emitSubtitle(text: string | null): void {
+  currentSubtitle = text;
   subtitleListener?.(text);
+}
+
+export function clearSubtitle(): void {
+  emitSubtitle(null);
+}
+
+export function getCurrentSubtitle(): string | null {
+  return currentSubtitle;
 }
 
 /** First user gesture unlocks audio on iOS Safari. */

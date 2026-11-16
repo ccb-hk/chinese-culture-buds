@@ -25,8 +25,15 @@
 .mascots {
   display: flex;
   gap: 24px;
-  font-size: 64px;
+  align-items: flex-end;
   animation: bob 1.2s ease-in-out infinite;
+}
+
+.mascots img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 @keyframes bob {

@@ -54,5 +54,11 @@ export function routeToHash(route: Route): string {
 }
 
 export function navigate(route: Route): void {
-  window.location.hash = routeToHash(route);
+  const next = routeToHash(route);
+  if (window.location.hash === next) {
+    // Force listeners when re-navigating to the same hash
+    window.dispatchEvent(new Event('hashchange'));
+    return;
+  }
+  window.location.hash = next;
 }

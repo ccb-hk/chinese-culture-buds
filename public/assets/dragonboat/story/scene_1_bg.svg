@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
-    <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#81C784"/><stop offset="100%" stop-color="#FFF8E1"/>
-    </linearGradient></defs>
-    <rect width="1200" height="700" fill="url(#g)"/>
-    <ellipse cx="600" cy="560" rx="520" ry="90" fill="#0288D1" opacity="0.35"/>
-    <text x="600" y="56" text-anchor="middle" fill="#fff" font-size="28" font-family="Noto Sans TC,sans-serif" opacity="0.85">端午場景 1 · 村莊屈原</text>
-    </svg>

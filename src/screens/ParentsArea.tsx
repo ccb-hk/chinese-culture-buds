@@ -19,7 +19,7 @@ export function ParentsArea() {
 
   if (!unlocked) {
     return (
-      <div className="app-shell">
+      <div className={styles.page}>
         <ParentGate
           open
           onSuccess={() => setUnlocked(true)}

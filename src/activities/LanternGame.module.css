@@ -2,14 +2,15 @@
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 88px 16px 24px;
+  padding: 80px 16px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  overflow: auto;
+  gap: 10px;
+  overflow: hidden;
   text-align: center;
   transition: background 0.6s ease;
+  box-sizing: border-box;
 }
 
 .day {
@@ -21,7 +22,9 @@
 }
 
 .title {
-  font-size: clamp(24px, 4vw, 34px);
+  margin: 0;
+  flex-shrink: 0;
+  font-size: clamp(22px, 3.5vw, 32px);
   color: var(--color-primary-deep);
   font-weight: 700;
 }
@@ -33,30 +36,35 @@
 .shapes {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 12px;
   justify-content: center;
   width: min(96vw, 720px);
+  flex: 1;
+  align-content: center;
 }
 
 .shapeCard {
-  min-width: 140px;
-  min-height: 160px;
+  min-width: 132px;
+  min-height: 148px;
   border-radius: 22px;
-  background: #fff;
+  background-color: rgba(255, 255, 255, 0.92);
+  background-image: url('/assets/ui/card.webp');
+  background-size: cover;
+  background-position: center;
   border: 3px solid transparent;
   box-shadow: 0 5px 0 rgba(58, 42, 26, 0.12);
-  padding: 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 700;
   font-size: 18px;
 }
 
 .shapeCard img {
-  width: 100px;
-  height: 110px;
+  width: 96px;
+  height: 104px;
   object-fit: contain;
   pointer-events: none;
 }
@@ -67,10 +75,19 @@
 
 .stage {
   position: relative;
-  width: min(70vw, 280px);
-  height: min(70vw, 300px);
+  width: min(42vh, 260px);
+  height: min(46vh, 280px);
   display: grid;
   place-items: center;
+  flex-shrink: 1;
+  min-height: 160px;
+}
+
+.lanternWrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: top center;
 }
 
 .lantern {
@@ -78,11 +95,10 @@
   height: 100%;
   object-fit: contain;
   pointer-events: none;
-  transform-origin: top center;
 }
 
-.lit .lantern {
-  filter: drop-shadow(0 0 24px #ffecb3) drop-shadow(0 0 48px #ffb300);
+.lit .lanternWrap {
+  filter: drop-shadow(0 0 18px #ffecb3) drop-shadow(0 0 36px #ffb300);
   animation: sway 2.2s ease-in-out infinite;
 }
 
@@ -98,12 +114,12 @@
 
 .moon {
   position: absolute;
-  top: 8%;
-  right: 10%;
-  font-size: 64px;
+  top: 4%;
+  right: 4%;
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
+  z-index: 2;
 }
 
 .night .moon {
@@ -116,13 +132,13 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 6px;
+  gap: 4px;
   pointer-events: none;
 }
 
 .slot {
-  border-radius: 12px;
-  border: 2px dashed rgba(255, 255, 255, 0.45);
+  border-radius: 10px;
+  border: 2px dashed rgba(255, 255, 255, 0.4);
   display: grid;
   place-items: center;
 }
@@ -135,26 +151,35 @@
 
 .palette {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-wrap: nowrap;
+  gap: 8px;
   justify-content: center;
-  width: min(96vw, 560px);
+  align-items: center;
+  width: min(96vw, 640px);
+  flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 8px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .stickerBtn {
-  width: 88px;
-  height: 88px;
-  border-radius: 18px;
+  flex: 0 0 auto;
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
   background: #fff;
   box-shadow: 0 4px 0 rgba(58, 42, 26, 0.1);
   display: grid;
   place-items: center;
-  padding: 6px;
+  padding: 4px;
+  border: none;
 }
 
 .stickerBtn img {
-  width: 70px;
-  height: 70px;
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
   pointer-events: none;
 }
 
@@ -165,15 +190,61 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .bulb {
-  width: 100px;
-  height: 100px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  font-size: 48px;
+  border: none;
   background: #fff59d;
   box-shadow: 0 0 0 6px #ffe082, 0 8px 0 rgba(0, 0, 0, 0.08);
+  display: grid;
+  place-items: center;
+}
+
+/* iPad landscape ~768–820px tall: keep all 6 stickers in one visible row */
+@media (max-height: 820px) {
+  .page {
+    padding: 68px 12px 10px;
+    gap: 6px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .stage {
+    width: min(34vh, 210px);
+    height: min(38vh, 230px);
+  }
+
+  .stickerBtn {
+    width: 60px;
+    height: 60px;
+  }
+
+  .stickerBtn img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .bulb {
+    width: 72px;
+    height: 72px;
+  }
+
+  .shapeCard {
+    min-width: 118px;
+    min-height: 132px;
+  }
+
+  .shapeCard img {
+    width: 80px;
+    height: 88px;
+  }
 }

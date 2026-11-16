@@ -12,7 +12,17 @@
   overflow: hidden;
 }
 
+.bgWrap {
+  position: absolute;
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  transform-origin: center center;
+  will-change: transform;
+}
+
 .bg,
+.bgOverlay,
 .fg {
   position: absolute;
   inset: 0;
@@ -22,6 +32,23 @@
   pointer-events: none;
 }
 
+.bgOverlay {
+  transition: opacity 0.55s ease;
+  z-index: 1;
+}
+
+.fg {
+  z-index: 2;
+}
+
+.ambient {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+}
+
 .character {
   position: absolute;
   bottom: 8%;
@@ -29,12 +56,14 @@
   height: auto;
   pointer-events: none;
   filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
+  z-index: 3;
 }
 
 .player {
   position: absolute;
   bottom: 6%;
-  left: 12%;
+  left: 42%;
+  transform: translateX(-50%);
   z-index: 4;
 }
 
@@ -48,10 +77,17 @@
   background: transparent;
   display: grid;
   place-items: center;
-  font-size: 40px;
+  padding: 0;
   cursor: pointer;
   z-index: 6;
-  touch-action: manipulation;
+  touch-action: none;
+}
+
+.hotspot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .hotspotGone {
@@ -73,30 +109,26 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(transparent, rgba(26, 35, 126, 0.85));
-}
-
-.progress {
-  position: absolute;
-  top: 72px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 15;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.75);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--color-text);
+  padding: 18px 20px calc(18px + env(safe-area-inset-bottom, 0px));
+  background-color: rgba(255, 248, 235, 0.55);
+  background-image: url('/assets/ui/panel.webp');
+  background-size: 100% 140%;
+  background-position: center top;
+  background-repeat: no-repeat;
 }
 
 .hintFinger {
   position: absolute;
   z-index: 8;
-  font-size: 42px;
   pointer-events: none;
   animation: poke 1s ease-in-out infinite;
+}
+
+.hintFinger img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
 }
 
 @keyframes poke {
@@ -106,5 +138,20 @@
   }
   50% {
     transform: translate(-40%, 12px);
+  }
+}
+
+@media (max-height: 820px) and (orientation: landscape) {
+  .stage {
+    inset: 0 0 96px 0;
+  }
+
+  .controls {
+    gap: 12px;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .character {
+    width: min(24vw, 180px);
   }
 }

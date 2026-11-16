@@ -6,7 +6,8 @@ export type HotspotKind =
   | 'star_glow'
   | 'label_bounce'
   | 'tap_progress'
-  | 'character_wave';
+  | 'character_wave'
+  | 'zongzi_toss';
 
 export type StoryHotspot = {
   id: string;
@@ -17,21 +18,39 @@ export type StoryHotspot = {
   size?: number;
   /** Spoken / shown label when tapped (e.g. 月餅！). */
   label?: { yue: string; pu: string };
-  /** Emoji / short glyph for the hotspot button. */
-  emoji?: string;
+  /** Image URL from content/assets (no emoji). */
+  asset?: string;
 };
 
 export type StoryCharacter = {
   id: string;
+  /** Direct image URL; if omitted, resolve via guide id + pose. */
+  src?: string;
   right?: string;
   left?: string;
   bottom?: string;
   width?: string;
+  pose?: 'idle' | 'talk' | 'welcome' | 'cheer' | 'hint' | 'tilt';
+  zIndex?: number;
+};
+
+export type StoryAmbient = {
+  id: string;
+  src: string;
+  /** Vertical position as % of stage height. */
+  y: number;
+  size?: number;
+  direction?: 'ltr' | 'rtl';
+  duration?: number;
+  delay?: number;
 };
 
 export type StoryScene = {
   id: string;
+  /** Absolute URL under /assets/...webp */
   bg: string;
+  /** Optional second bg that fades in as dismiss interactions complete (e.g. cool village). */
+  overlayBg?: string;
   fg?: string;
   lineId: string;
   /** Show player avatar in this scene. */
@@ -39,6 +58,7 @@ export type StoryScene = {
   playerOutfit?: OutfitId;
   characters?: StoryCharacter[];
   hotspots?: StoryHotspot[];
+  ambient?: StoryAmbient[];
   /**
    * How many hotspot interactions are required before advancing.
    * Defaults to 0 (auto after narration when autoAdvance).
